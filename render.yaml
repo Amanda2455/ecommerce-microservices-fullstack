@@ -1,0 +1,117 @@
+services:
+  # Eureka Server (Service Registry)
+  - type: web
+    name: eureka-server
+    env: docker
+    dockerfilePath: ./backend/eureka-server/Dockerfile
+    dockerContext: ./backend/eureka-server
+    healthCheckPath: /actuator/health
+    
+  # API Gateway
+  - type: web
+    name: api-gateway
+    env: docker
+    dockerfilePath: ./backend/api-gateway/Dockerfile
+    dockerContext: ./backend/api-gateway
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+        fromService:
+          type: web
+          name: eureka-server
+          envVarKey: RENDER_INTERNAL_HOSTNAME
+          property: host
+        
+  # User Service
+  - type: web
+    name: user-service
+    env: docker
+    dockerfilePath: ./backend/user-service/Dockerfile
+    dockerContext: ./backend/user-service
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+        fromService:
+          type: web
+          name: eureka-server
+          envVarKey: RENDER_INTERNAL_HOSTNAME
+          property: host
+        
+  # Product Service
+  - type: web
+    name: product-service
+    env: docker
+    dockerfilePath: ./backend/product-service/Dockerfile
+    dockerContext: ./backend/product-service
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+        fromService:
+          type: web
+          name: eureka-server
+          envVarKey: RENDER_INTERNAL_HOSTNAME
+          property: host
+        
+  # Inventory Service
+  - type: web
+    name: inventory-service
+    env: docker
+    dockerfilePath: ./backend/inventory-service/Dockerfile
+    dockerContext: ./backend/inventory-service
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+        fromService:
+          type: web
+          name: eureka-server
+          envVarKey: RENDER_INTERNAL_HOSTNAME
+          property: host
+        
+  # Order Service
+  - type: web
+    name: order-service
+    env: docker
+    dockerfilePath: ./backend/order-service/Dockerfile
+    dockerContext: ./backend/order-service
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+        fromService:
+          type: web
+          name: eureka-server
+          envVarKey: RENDER_INTERNAL_HOSTNAME
+          property: host
+        
+  # Payment Service
+  - type: web
+    name: payment-service
+    env: docker
+    dockerfilePath: ./backend/payment-service/Dockerfile
+    dockerContext: ./backend/payment-service
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+        fromService:
+          type: web
+          name: eureka-server
+          envVarKey: RENDER_INTERNAL_HOSTNAME
+          property: host
+        
+  # Frontend
+  - type: web
+    name: frontend
+    env: docker
+    dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend
+    envVars:
+      - key: REACT_APP_API_URL
+        fromService:
+          type: web
+          name: api-gateway
+          envVarKey: RENDER_EXTERNAL_URL
