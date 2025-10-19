@@ -1,0 +1,224 @@
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+
+      routes:
+        # User Service Routes
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: userServiceCircuitBreaker
+                fallbackUri: forward:/fallback/users
+
+        # Product Service Routes
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/api/products/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: productServiceCircuitBreaker
+                fallbackUri: forward:/fallback/products
+
+        # Category Routes (Product Service)
+        - id: category-service
+          uri: lb://product-service
+          predicates:
+            - Path=/api/categories/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: categoryServiceCircuitBreaker
+                fallbackUri: forward:/fallback/categories
+
+        # Inventory Service Routes
+        - id: inventory-service
+          uri: lb://inventory-service
+          predicates:
+            - Path=/api/inventory/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: inventoryServiceCircuitBreaker
+                fallbackUri: forward:/fallback/inventory
+
+        # Warehouse Routes (Inventory Service)
+        - id: warehouse-service
+          uri: lb://inventory-service
+          predicates:
+            - Path=/api/warehouses/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: warehouseServiceCircuitBreaker
+                fallbackUri: forward:/fallback/warehouses
+
+        # Stock Movement Routes (Inventory Service)
+        - id: stock-movement-service
+          uri: lb://inventory-service
+          predicates:
+            - Path=/api/stock-movements/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: stockMovementServiceCircuitBreaker
+                fallbackUri: forward:/fallback/stock-movements
+
+        # Order Service Routes
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/orders/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: orderServiceCircuitBreaker
+                fallbackUri: forward:/fallback/orders
+
+        # Order Status History Routes (Order Service)
+        - id: order-status-history-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/order-status-history/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: orderStatusHistoryCircuitBreaker
+                fallbackUri: forward:/fallback/order-status-history
+
+        # Payment Service Routes
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/payments/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: paymentServiceCircuitBreaker
+                fallbackUri: forward:/fallback/payments
+
+        # Refund Routes (Payment Service)
+        - id: refund-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/refunds/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: refundServiceCircuitBreaker
+                fallbackUri: forward:/fallback/refunds
+
+        # ? Swagger/OpenAPI Routes for All Services
+        - id: user-service-openapi
+          uri: lb://user-service
+          predicates:
+            - Path=/user-service/v3/api-docs/**
+          filters:
+            - RewritePath=/user-service/v3/api-docs/(?<segment>.*), /v3/api-docs/$\{segment}
+
+        - id: product-service-openapi
+          uri: lb://product-service
+          predicates:
+            - Path=/product-service/v3/api-docs/**
+          filters:
+            - RewritePath=/product-service/v3/api-docs/(?<segment>.*), /v3/api-docs/$\{segment}
+
+        - id: inventory-service-openapi
+          uri: lb://inventory-service
+          predicates:
+            - Path=/inventory-service/v3/api-docs/**
+          filters:
+            - RewritePath=/inventory-service/v3/api-docs/(?<segment>.*), /v3/api-docs/$\{segment}
+
+        - id: order-service-openapi
+          uri: lb://order-service
+          predicates:
+            - Path=/order-service/v3/api-docs/**
+          filters:
+            - RewritePath=/order-service/v3/api-docs/(?<segment>.*), /v3/api-docs/$\{segment}
+
+        - id: payment-service-openapi
+          uri: lb://payment-service
+          predicates:
+            - Path=/payment-service/v3/api-docs/**
+          filters:
+            - RewritePath=/payment-service/v3/api-docs/(?<segment>.*), /v3/api-docs/$\{segment}
+
+      # Global CORS Configuration
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origins: "*"
+            allowed-methods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+              - OPTIONS
+            allowed-headers: "*"
+            allow-credentials: false
+            max-age: 3600
+
+server:
+  port: 8080
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+
+# ? Springdoc OpenAPI Configuration
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - name: User Service
+        url: /user-service/v3/api-docs
+      - name: Product Service
+        url: /product-service/v3/api-docs
+      - name: Inventory Service
+        url: /inventory-service/v3/api-docs
+      - name: Order Service
+        url: /order-service/v3/api-docs
+      - name: Payment Service
+        url: /payment-service/v3/api-docs
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway,metrics
+  endpoint:
+    health:
+      show-details: always
+    gateway:
+      enabled: true
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    org.springframework.cloud.gateway: DEBUG
+    com.ecommerce.gateway: DEBUG

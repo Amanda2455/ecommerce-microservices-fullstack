@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: payment-service
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/ecommerce?createDatabaseIfNotExist=true
+    username: root
+    password: Aman@2455
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+
+server:
+  port: 8085
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+
+# Payment Gateway Configuration (Simulated)
+payment:
+  gateway:
+    stripe:
+      enabled: true
+      api-key: sk_test_simulated_key
+    paypal:
+      enabled: true
+      client-id: paypal_simulated_client_id
+    razorpay:
+      enabled: true
+      key-id: rzp_test_simulated_key
+
+# ✅ Add to existing application.yml
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html

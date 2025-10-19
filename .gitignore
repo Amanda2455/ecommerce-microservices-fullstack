@@ -1,0 +1,27 @@
+# Backend (Java/Maven)
+backend/**/target/
+backend/**/*.class
+backend/**/*.jar
+backend/**/*.war
+backend/**/*.ear
+backend/**/.mvn/
+backend/**/mvnw
+backend/**/mvnw.cmd
+*.log
+
+# Frontend (React/Node)
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+frontend/.env.local
+frontend/.env.production
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# Environment files
+.env
+*.env
