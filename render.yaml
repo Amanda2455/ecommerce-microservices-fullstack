@@ -20,8 +20,7 @@ services:
         fromService:
           type: web
           name: eureka-server
-          envVarKey: RENDER_INTERNAL_HOSTNAME
-          property: host
+          property: hostport
         
   # User Service
   - type: web
@@ -36,8 +35,7 @@ services:
         fromService:
           type: web
           name: eureka-server
-          envVarKey: RENDER_INTERNAL_HOSTNAME
-          property: host
+          property: hostport
         
   # Product Service
   - type: web
@@ -52,8 +50,7 @@ services:
         fromService:
           type: web
           name: eureka-server
-          envVarKey: RENDER_INTERNAL_HOSTNAME
-          property: host
+          property: hostport
         
   # Inventory Service
   - type: web
@@ -68,8 +65,7 @@ services:
         fromService:
           type: web
           name: eureka-server
-          envVarKey: RENDER_INTERNAL_HOSTNAME
-          property: host
+          property: hostport
         
   # Order Service
   - type: web
@@ -84,8 +80,7 @@ services:
         fromService:
           type: web
           name: eureka-server
-          envVarKey: RENDER_INTERNAL_HOSTNAME
-          property: host
+          property: hostport
         
   # Payment Service
   - type: web
@@ -100,8 +95,7 @@ services:
         fromService:
           type: web
           name: eureka-server
-          envVarKey: RENDER_INTERNAL_HOSTNAME
-          property: host
+          property: hostport
         
   # Frontend
   - type: web
@@ -114,4 +108,4 @@ services:
         fromService:
           type: web
           name: api-gateway
-          envVarKey: RENDER_EXTERNAL_URL
+          property: host
